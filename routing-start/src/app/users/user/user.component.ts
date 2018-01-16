@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, ParamMap } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 /*
   So basically to retrieve url like /user/:id/:name
   we can either do it with the approach of getting params on ngOnInit without Subscription, if the Component does not call itself
-  if so we have to use a Subscription (observable) and destory it afterwards
+  if so we have to use a Subscription (observable) and destory it afterwards, params is old tho so lets use paramMap
  */
 
 @Component({
@@ -22,13 +22,13 @@ export class UserComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user = {
       id: this.route.snapshot.params['id'],
-      name: this.route.snapshot.params['name']
+      name: this.route.snapshot.paramMap.get('name')
     };
-
-    this.paramSubscription  = this.route.params.subscribe(
-        (params: Params) => {
-          this.user.id = params['id'];
-          this.user.name = params['name'];
+// using + parameter converts string to number
+    this.paramSubscription  = this.route.paramMap.subscribe(
+        (params: ParamMap) => {
+          this.user.id = +params.get('id');
+          this.user.name = params.get('name');
         }
     );
   }
